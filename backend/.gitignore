@@ -1,0 +1,79 @@
+# =========================
+# OS / IDE
+# =========================
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =========================
+# Go
+# =========================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.out
+
+# Go build output
+/bin/
+/dist/
+/build/
+
+# Air hot reload
+tmp/
+
+# =========================
+# Backend config
+# =========================
+backend/config/config.yml
+backend/config/config.yaml
+
+# 保留示例配置
+!backend/config/config.yml.example
+!backend/config/config.yaml.example
+
+# =========================
+# Env files
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Frontend
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# =========================
+# Database / SQL temp files
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Upload files
+# =========================
+uploads/
+backend/uploads/
+
+# =========================
+# Runtime files
+# =========================
+*.pid

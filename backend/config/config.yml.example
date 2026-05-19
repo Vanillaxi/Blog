@@ -1,0 +1,12 @@
+app:
+  name:
+  port: 8081
+
+database:
+  dsn: "root:your_passward@tcp(127.0.0.1:3306)/my_blog?charset=utf8mb4&parseTime=True&loc=Local"
+  max_idle_conns: 10
+  max_open_conns: 100
+
+jwt:
+  secret: your_jwt_secret_key_here
+  expire_hours: 24
