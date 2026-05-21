@@ -219,3 +219,39 @@ func GetAdminArticles(pageNum int, pageSize int, status int, isDeleted int, cate
 	return articles, total, nil
 
 }
+
+// 游客模糊搜索
+func SearchArticles(keyword string, pageNum int, pageSize int) ([]Article, int64, error) {
+	var articles []Article
+	var total int64
+
+	query := global.DB.Model(&Article{}).
+		Where("status=? and is_deleted=?", 1, 0)
+
+	if keyword != "" {
+		//标题或摘要模糊匹配
+		query = query.Where("title LIKE ? OR summary like ?", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	//先统计总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 分页查询
+	err := query.
+		Select("id", "title", "summary", "cover_url", "category_id",
+			"comment_count", "status", "is_top", "is_deleted",
+			"published_time", "create_time", "update_time").
+		Order("is_top DESC, published_time DESC, id DESC").
+		Limit(pageSize).
+		Offset((pageNum - 1) * pageSize).
+		Find(&articles).Error
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return articles, total, nil
+
+}

@@ -229,3 +229,29 @@ func GetAdminArticles(c *gin.Context) {
 	})
 
 }
+
+func SearchArticles(c *gin.Context) {
+	pageNum, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	keyword := c.Query("keyword")
+
+	articles, total, err := models.SearchArticles(keyword, pageNum, pageSize)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg":  "搜索文章失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": gin.H{
+			"list":  articles,
+			"total": total,
+			"page":  pageNum,
+			"size":  pageSize,
+		},
+		"msg": "搜索成功",
+	})
+}
