@@ -1,6 +1,9 @@
 package router
 
 import (
+	"MyBlog/controllers"
+	"MyBlog/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,29 +17,48 @@ func InitRouter() *gin.Engine {
 		})
 	})
 
-	//前台公开接口
-	api := r.Group("/api")
+	//publish接口
+	v1 := r.Group("/api")
 	{
-		api.GET("/articles", controllers.GetArticles)
+		v1.GET("/categories", controllers.GetCategories)
+		v1.GET("/tags", controllers.GetTags)
 
-		api.GET("/category", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "分类列表接口",
-			})
-		})
+		v1.GET("/categories/:id/articles", controllers.GetArticlesByCategoryID)
+		v1.GET("/tags/:id/articles", controllers.GetArticlesByTagID)
+		v1.GET("/articles/timeline", controllers.GetArticlesTimeline)
+		v1.GET("/articles/:id", controllers.GetArtileDetail)
+
 	}
 
-	//后台接口
-	admin := r.Group("/admin")
+	//admin接口
+	admin := r.Group("/api/admin")
 	{
-		admin.POST("/login", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "管理员登录接口",
-			})
-		})
+		//TODO:后期需要隐藏，并且取消register
+		admin.POST("/login", controllers.Login)
+		admin.POST("/register", controllers.Register)
+		admin.POST("/username", controllers.UpdateUsername)
+		admin.POST("/password", controllers.UpdatePassword)
 
-		//TODO:加jwt
-		admin.POST("/articles", controllers.CreateArticle)
+		admin.Use(middlewares.AdminAuthMiddleware())
+		{
+			admin.POST("/articles/create", controllers.CreateArticle)
+			admin.PUT("/articles/update/:id", controllers.UpdateArticle)
+			admin.PUT("/articles/updateStatus/:id", controllers.UpdateArticleStatus)
+			admin.DELETE("/articles/delete/:id", controllers.DeleteArticle)
+
+			admin.GET("/tags", controllers.GetAdminTags)
+			admin.POST("/tag/create", controllers.CreateTag)
+			admin.PUT("/tag/:id/status", controllers.UpdateTagStatus)
+			admin.PUT("/tag/:id/sort", controllers.UpdateTagSort)
+
+			admin.POST("/categories", controllers.GetAdminCategories)
+			admin.POST("/categories/create", controllers.CreateCategory)
+			admin.PUT("/categories/:id/status", controllers.UpdateCategoryStatus)
+			admin.PUT("/categories/:id/sort", controllers.UpdateCategorySort)
+
+			admin.GET("/articles", controllers.GetAdminArticles)
+		}
+
 	}
 
 	return r

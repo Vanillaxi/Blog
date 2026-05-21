@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"os"
 	"time"
 
 	"MyBlog/global"
@@ -11,14 +10,14 @@ import (
 )
 
 type AdminClaims struct {
-	AdminID  uint64 `json:"admin_id"`
+	AdminID  uint32 `json:"admin_id"`
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
 // 生成管理员token
-func GenerateAdminToken(adminID uint64, username string) (string, error) {
-	jwtKey := []byte(os.Getenv("JWT_SECRET"))
+func GenerateAdminToken(adminID uint32, username string) (string, error) {
+	jwtKey := []byte(global.Config.Jwt.Secret)
 
 	expirationTime := time.Now().Add(time.Duration(global.Config.Jwt.ExpireHours) * time.Hour)
 

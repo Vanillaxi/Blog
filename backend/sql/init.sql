@@ -37,6 +37,8 @@ create table tag (
                      id BIGINT primary key auto_increment comment '标签ID',
                      tag_name varchar(50) not null comment '标签名称',
                      slug varchar(80) default null comment '标签别名，用于URL',
+                     status tinyint not null default 1 comment '状态:1正常，0禁用',
+                     sort INT not null default 0 comment '排序值(越大越靠前)',
                      article_count int not null default 0 comment'文章数量',
                      create_time datetime not null default current_timestamp comment '创建时间',
                      update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
@@ -58,7 +60,7 @@ create table article (
                          is_top tinyint not null default 0 comment '是否置顶：1是，0否',
                          is_deleted tinyint not null default 0 comment  '逻辑删除“1删除，0未删除',
 
-    -- view_count int not null default 0 comment '浏览量',
+                         -- view_count int not null default 0 comment '浏览量',
                          comment_count int not null default 0 comment '评论数',
 
                          published_time datetime default null comment '发布时间',
