@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ink: #1f2933;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: #fbfaf8;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.sakura-bg {
+  background-image:
+    linear-gradient(to bottom, rgba(238,243,248,.78), rgba(247,241,244,.76)),
+    url("/images/sakura-mountain.png");
+  background-size: cover;
+  background-position: center 42%;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 18px 50px rgba(100, 116, 139, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.article-markdown {
+  --tw-prose-body: #475569;
+  --tw-prose-headings: #24314f;
+  --tw-prose-lead: #64748b;
+  --tw-prose-links: #c45f78;
+  --tw-prose-bold: #26324d;
+  --tw-prose-counters: #94a3b8;
+  --tw-prose-bullets: #c98596;
+  --tw-prose-hr: rgba(148, 163, 184, 0.28);
+  --tw-prose-quotes: #475569;
+  --tw-prose-quote-borders: rgba(217, 127, 151, 0.45);
+  --tw-prose-captions: #94a3b8;
+  --tw-prose-code: #334155;
+  --tw-prose-pre-code: #dbeafe;
+  --tw-prose-pre-bg: #172033;
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.article-markdown :where(h1, h2, h3, h4):not(:where(.not-prose *)) {
+  color: #24314f;
+  font-family: Georgia, ui-serif, serif;
+  font-style: italic;
+  letter-spacing: 0;
+  line-height: 1.28;
+}
+
+.article-markdown :where(h1):not(:where(.not-prose *)) {
+  margin-top: 0;
+  margin-bottom: 1.1rem;
+  font-size: clamp(2rem, 7vw, 3rem);
+}
+
+.article-markdown :where(h2):not(:where(.not-prose *)) {
+  margin-top: 2.2rem;
+  margin-bottom: 0.8rem;
+  font-size: clamp(1.55rem, 5vw, 2.1rem);
+}
+
+.article-markdown :where(h3):not(:where(.not-prose *)) {
+  margin-top: 1.8rem;
+  margin-bottom: 0.65rem;
+  font-size: clamp(1.25rem, 4vw, 1.55rem);
+}
+
+.article-markdown :where(p):not(:where(.not-prose *)) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.article-markdown :where(a):not(:where(.not-prose *)) {
+  text-decoration-color: rgba(196, 95, 120, 0.32);
+  text-underline-offset: 0.2em;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.article-markdown :where(a:hover):not(:where(.not-prose *)) {
+  color: #a94d67;
+  text-decoration-color: rgba(196, 95, 120, 0.72);
+}
+
+.article-markdown :where(blockquote):not(:where(.not-prose *)) {
+  margin: 1.6rem 0;
+  border-left: 4px solid rgba(217, 127, 151, 0.42);
+  border-radius: 0 1rem 1rem 0;
+  background: rgba(248, 250, 252, 0.68);
+  padding: 0.85rem 1.1rem;
+  color: #5f6f82;
+  font-style: normal;
+}
+
+.article-markdown :where(blockquote p):not(:where(.not-prose *)) {
+  margin: 0.35rem 0;
+}
+
+.article-markdown :where(pre):not(:where(.not-prose *)) {
+  overflow-x: auto;
+  border-radius: 1rem;
+  background: #172033;
+  padding: 1.15rem 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.article-markdown :where(pre code):not(:where(.not-prose *)) {
+  white-space: pre;
+  color: #dbeafe;
+  font-size: 0.9rem;
+}
+
+.article-markdown :where(code):not(:where(pre code)):not(:where(.not-prose *)) {
+  border-radius: 0.45rem;
+  background: rgba(226, 232, 240, 0.68);
+  padding: 0.16rem 0.38rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.article-markdown :where(code):not(:where(pre code)):not(:where(.not-prose *))::before,
+.article-markdown :where(code):not(:where(pre code)):not(:where(.not-prose *))::after {
+  content: "";
+}
+
+.article-markdown :where(img):not(:where(.not-prose *)) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.8rem auto;
+  border-radius: 1.1rem;
+  box-shadow: 0 16px 42px rgba(100, 116, 139, 0.16);
+}
+
+.article-markdown :where(hr):not(:where(.not-prose *)) {
+  margin: 2.4rem 0;
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+.article-markdown :where(ul, ol):not(:where(.not-prose *)) {
+  padding-left: 1.35rem;
+}
+
+.article-markdown :where(li):not(:where(.not-prose *)) {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  padding-left: 0.15rem;
+}
+
+.admin-surface {
+  background:
+    radial-gradient(circle at top left, rgba(250, 225, 229, 0.45), transparent 32rem),
+    radial-gradient(circle at top right, rgba(221, 238, 236, 0.55), transparent 28rem),
+    #fbfaf8;
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate3d(-1.2%, 0.8%, 0);
+  }
+  100% {
+    transform: scale(1.02) translate3d(0.8%, -0.5%, 0);
+  }
+}
+
+@keyframes sakura-fall {
+  0% {
+    transform: translate3d(60px, -12vh, 0) rotate(var(--petal-rotate));
+  }
+  45% {
+    transform: translate3d(calc(var(--petal-drift) * -0.45), 44vh, 0) rotate(calc(var(--petal-rotate) + 120deg));
+  }
+  100% {
+    transform: translate3d(calc(var(--petal-drift) * -1), 112vh, 0) rotate(calc(var(--petal-rotate) + 260deg));
+  }
+}
+
+.hero-drift {
+  animation: hero-drift 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.sakura-petal {
+  top: -8vh;
+  animation-name: sakura-fall;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+.sakura-petal:nth-child(3n) {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.sakura-petal:nth-child(4n) {
+  background: rgba(251, 207, 232, 0.7);
+}
+
+@keyframes hero-title-fade {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes typing-caret {
+  0%, 45% {
+    opacity: 1;
+  }
+  46%, 100% {
+    opacity: 0;
+  }
+}
+
+.hero-title-fade {
+  animation: hero-title-fade 720ms ease-out both;
+}
+
+.hero-title-soft-shadow {
+  text-shadow:
+    0 10px 35px rgba(255, 255, 255, 0.55),
+    0 2px 8px rgba(80, 90, 120, 0.18);
+}
+
+.typing-caret {
+  animation: typing-caret 1.05s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  .sakura-petal:nth-child(n + 11) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drift,
+  .sakura-petal,
+  .hero-title-fade,
+  .typing-caret {
+    animation: none !important;
+  }
+
+  .sakura-petal-layer {
+    display: none;
+  }
+}

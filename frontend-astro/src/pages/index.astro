@@ -1,0 +1,19 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import { HeroCenter } from "@/components/public/HeroCenter";
+import { PublicNav } from "@/components/public/PublicNav";
+import { SakuraPetals } from "@/components/public/SakuraPetals";
+---
+
+<PublicLayout title="Vanillaxi">
+  <section class="relative min-h-screen overflow-hidden">
+    <div class="hero-drift absolute inset-[-32px] bg-[url('/images/sakura-mountain.png')] bg-cover bg-center"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/25"></div>
+    <SakuraPetals />
+    <PublicNav client:load />
+    <div class="relative z-10 flex min-h-screen items-center justify-center px-4 text-center">
+      <HeroCenter client:load />
+    </div>
+    <p class="absolute bottom-8 left-0 right-0 z-10 text-center text-xs tracking-[0.42em] text-white/45">CODING · WRITING · MOMENTS</p>
+  </section>
+</PublicLayout>

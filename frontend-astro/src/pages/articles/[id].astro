@@ -1,0 +1,71 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import PageShell from "@/components/public/PageShell.astro";
+import { CommentSection } from "@/components/public/CommentSection";
+import { getArticleDetail, searchArticles } from "@/api/article";
+import { getCategories } from "@/api/category";
+import { getTags } from "@/api/tag";
+import { getListPayload, mapArticle, mapCategory, mapTag } from "@/lib/publicMappers";
+
+export async function getStaticPaths() {
+  try {
+    const response = await searchArticles({ keyword: "", page: 1, pageSize: 50 });
+    return getListPayload(response.data)
+      .map((article) => String((article as { id?: number }).id ?? ""))
+      .filter(Boolean)
+      .map((id) => ({ params: { id } }));
+  } catch {
+    return [];
+  }
+}
+
+const id = Number(Astro.params.id);
+let article = mapArticle({ id, title: "文章加载失败", summary: "暂时无法获取文章详情。", content: "", status: 1 });
+let detailError = "";
+
+try {
+  const [articleResponse, categoryResponse, tagResponse] = await Promise.all([
+    getArticleDetail(id),
+    getCategories(),
+    getTags(),
+  ]);
+  const categories = getListPayload(categoryResponse.data).map(mapCategory);
+  const tags = getListPayload(tagResponse.data).map(mapTag);
+  article = mapArticle(articleResponse.data, categories, tags);
+} catch (err) {
+  detailError = err instanceof Error ? err.message : "文章详情加载失败";
+}
+---
+
+<PublicLayout title={`${article.title} - Vanillaxi`}>
+  <PageShell title="" subtitle="">
+    <article class="glass-card overflow-hidden rounded-[2rem] p-4 sm:p-5">
+      {article.cover && (
+        <div class="relative aspect-[21/9] overflow-hidden rounded-[1.5rem] shadow-soft">
+          <img
+            src={article.cover}
+            alt=""
+            class="h-full w-full object-cover opacity-90"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-white/10"></div>
+        </div>
+      )}
+      <div class="px-2 py-7 sm:px-5">
+        <div class="mb-5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <span class="rounded-full bg-white/50 px-2.5 py-1">{article.category.name}</span>
+          <span>{article.updatedAt}</span>
+        </div>
+        <h1 class="font-serif text-4xl italic tracking-tight text-[#24314f] sm:text-5xl">{article.title}</h1>
+        <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{article.summary}</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {article.tags.map((tag) => <span class="rounded-full border border-white/50 bg-white/40 px-3 py-1 text-xs text-slate-500">#{tag.name}</span>)}
+        </div>
+        <div class="mt-9 border-t border-white/55 pt-8">
+          <div class="prose prose-slate max-w-none whitespace-pre-line text-slate-700">{article.content}</div>
+        </div>
+      </div>
+    </article>
+    {detailError && <p class="mx-auto mt-6 max-w-4xl rounded-2xl border border-rose-100 bg-rose-50/80 px-4 py-3 text-sm text-rose-600">{detailError}</p>}
+    <CommentSection articleId={article.id} client:load />
+  </PageShell>
+</PublicLayout>

@@ -3,6 +3,7 @@ package models
 import (
 	"MyBlog/global"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -25,15 +26,15 @@ type Article struct {
 	IsDeleted int8 `gorm:"not null;default:0" json:"is_deleted"`
 
 	PublishedTime *time.Time `gorm:"column:published_time" json:"published_time"`
-	CreateTime    time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"create_time"`
-	UpdateTime    time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"update_time"`
+	CreateTime    time.Time  `gorm:"column:create_time;autoCreateTime" json:"create_time"`
+	UpdateTime    time.Time  `gorm:"column:update_time;autoUpdateTime" json:"update_time"`
 }
 
 func CreateArticle(article *Article, tagIDs []uint32) error {
 	return global.DB.Transaction(func(tx *gorm.DB) error {
 		//1.创建文章
 		if err := tx.Create(article).Error; err != nil {
-			return err
+			return fmt.Errorf("创建文章记录失败: %w", err)
 		}
 
 		//2. 没有标签就直接返回
@@ -51,7 +52,7 @@ func CreateArticle(article *Article, tagIDs []uint32) error {
 		}
 
 		if err := tx.Create(&articleTags).Error; err != nil {
-			return err
+			return fmt.Errorf("创建文章标签关联失败: %w", err)
 		}
 
 		return nil
@@ -142,6 +143,31 @@ func UpdateArticleStatus(id uint32, newStatus int8) error {
 			}
 
 			if err := increaseArticleCount(tx, article.CategoryID, tagIDs); err != nil {
+				return err
+			}
+
+		case oldStatus == 1 && newStatus == 0:
+			if err := tx.Model(&Article{}).
+				Where("id=? and is_deleted=?", id, 0).
+				Update("status", 0).Error; err != nil {
+				return err
+			}
+
+			if err := decreaseArticleCount(tx, article.CategoryID, tagIDs); err != nil {
+				return err
+			}
+
+		case oldStatus == 2 && newStatus == 0:
+			if err := tx.Model(&Article{}).
+				Where("id=? and is_deleted=?", id, 0).
+				Update("status", 0).Error; err != nil {
+				return err
+			}
+
+		case oldStatus == 0 && newStatus == 2:
+			if err := tx.Model(&Article{}).
+				Where("id=? and is_deleted=?", id, 0).
+				Update("status", 2).Error; err != nil {
 				return err
 			}
 

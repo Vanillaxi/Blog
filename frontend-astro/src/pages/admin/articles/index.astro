@@ -1,0 +1,8 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { AdminPage } from "@/components/admin/AdminPage";
+---
+
+<AdminLayout title="文章管理 - Vanillaxi">
+  <AdminPage page="articles" client:load />
+</AdminLayout>

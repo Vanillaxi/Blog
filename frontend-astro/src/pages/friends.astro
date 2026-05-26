@@ -1,0 +1,11 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import PageShell from "@/components/public/PageShell.astro";
+import { FriendLinks } from "@/components/public/FriendLinks";
+---
+
+<PublicLayout title="友链 - Vanillaxi">
+  <PageShell title="友链" subtitle="一些值得常去看看的站点。">
+    <FriendLinks client:load />
+  </PageShell>
+</PublicLayout>

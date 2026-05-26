@@ -9,19 +9,33 @@ import (
 )
 
 type UpdateArticleRequest struct {
-	Title      string   `json:"title" binding:"required"`
-	CategoryID uint32   `json:"category_id" binding:"required"`
-	Summary    string   `json:"summary" binding:"required"`
-	Content    string   `json:"content" binding:"required"`
-	IsTop      int8     `json:"is_top" binding:"required"`
-	CoverURL   string   `json:"cover_url" binding:"required"`
-	TagIDs     []uint32 `json:"tag_ids"`
+	Title      string   `json:"title" binding:"required" example:"我的第一篇博客 - 已更新"`
+	CategoryID uint32   `json:"category_id" binding:"required" example:"1"`
+	Summary    string   `json:"summary" example:"这是一篇更新后的 Go 后端开发文章摘要"`
+	Content    string   `json:"content" binding:"required" example:"这里是更新后的文章正文内容。"`
+	IsTop      int8     `json:"is_top" example:"1"`
+	CoverURL   string   `json:"cover_url" example:"https://example.com/cover-updated.jpg"`
+	TagIDs     []uint32 `json:"tag_ids" example:"1,2"`
 }
 
 type UpdateArticleStatusRequest struct {
-	Status *int8 `json:"status" binding:"required"` //要用指针，不然传0可能会认为没传，导致格式错误
+	Status *int8 `json:"status" binding:"required" example:"1"` //要用指针，不然传0可能会认为没传，导致格式错误
 }
 
+// UpdateArticle godoc
+// @Summary 更新文章
+// @Description 管理员按文章 ID 更新文章内容和标签。
+// @Tags admin/article
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer token"
+// @Param id path int true "文章 ID"
+// @Param body body UpdateArticleRequest true "更新文章请求体。需要先准备 article_id、category_id 和 tag_ids"
+// @Success 200 {object} object "示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"修改文章成功\"}"
+// @Failure 400 {object} object "示例：{\"code\":400,\"msg\":\"文章ID不合法\"}"
+// @Failure 500 {object} object "示例：{\"code\":500,\"msg\":\"修改文章失败\"}"
+// @Router /api/admin/articles/update/{id} [put]
 func UpdateArticle(c *gin.Context) {
 	//从路径参数中获取文章ID
 	idParam := c.Param("id")
@@ -116,6 +130,20 @@ func UpdateArticle(c *gin.Context) {
 
 }
 
+// UpdateArticleStatus godoc
+// @Summary 更新文章状态
+// @Description 管理员发布或下架文章。
+// @Tags admin/article
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer token"
+// @Param id path int true "文章 ID"
+// @Param body body UpdateArticleStatusRequest true "文章状态请求体。status 示例：1 表示发布，2 表示下架"
+// @Success 200 {object} object "示例：{\"code\":200,\"msg\":\"文章发布成功\"}"
+// @Failure 400 {object} object "示例：{\"code\":400,\"msg\":\"文章状态不合法,只允许发布或下架\"}"
+// @Failure 500 {object} object "示例：{\"code\":500,\"msg\":\"更新文章状态失败\"}"
+// @Router /api/admin/articles/updateStatus/{id} [put]
 func UpdateArticleStatus(c *gin.Context) {
 	idParam := c.Param("id")
 	id64, err := strconv.ParseUint(idParam, 10, 32)
@@ -140,10 +168,10 @@ func UpdateArticleStatus(c *gin.Context) {
 
 	status := *req.Status
 
-	if status != 1 && status != 2 {
+	if status != 0 && status != 1 && status != 2 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code": 400,
-			"msg":  "文章状态不合法,只允许发布或下架",
+			"msg":  "文章状态不合法,只允许草稿、发布或下架",
 		})
 		return
 	}

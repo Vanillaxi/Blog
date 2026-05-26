@@ -1,0 +1,11 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import PageShell from "@/components/public/PageShell.astro";
+import { ArticleList } from "@/components/public/ArticleList";
+---
+
+<PublicLayout title="文章 - Vanillaxi">
+  <PageShell title="文章" subtitle="一些文字、记录和阶段性的思考。">
+    <ArticleList client:load />
+  </PageShell>
+</PublicLayout>

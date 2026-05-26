@@ -1,0 +1,10 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { LoginPanel } from "@/components/admin/LoginPanel";
+---
+
+<AdminLayout title="管理员登录 - Vanillaxi">
+  <main class="sakura-bg flex min-h-screen items-center justify-center px-4">
+    <LoginPanel client:load />
+  </main>
+</AdminLayout>

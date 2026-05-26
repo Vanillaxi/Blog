@@ -10,8 +10,12 @@ type Admin struct {
 	Username   string    `gorm:"not null;unique" json:"username"`
 	Password   string    `gorm:"not null" json:"password"` //	密码通常在JSON中隐藏
 	Nickname   string    `gorm:"not null" json:"nickname"`
-	CreateTime time.Time `gorm:"column:create_time" json:"createTime"`
-	UpdateTime time.Time `gorm:"column:update_time" json:"updateTime"`
+	CreateTime time.Time `gorm:"column:create_time;autoCreateTime" json:"createTime"`
+	UpdateTime time.Time `gorm:"column:update_time;autoUpdateTime" json:"updateTime"`
+}
+
+func (Admin) TableName() string {
+	return "admin_user"
 }
 
 func GetAdminByUsername(username string) (Admin, error) {

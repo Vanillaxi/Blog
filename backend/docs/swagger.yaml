@@ -1,0 +1,1414 @@
+basePath: /
+definitions:
+  controllers.AdminLoginRequest:
+    properties:
+      password:
+        example: "123456"
+        type: string
+      username:
+        example: admin
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controllers.AdminRegisterRequest:
+    properties:
+      password:
+        example: "123456"
+        maxLength: 20
+        minLength: 6
+        type: string
+      username:
+        example: admin
+        maxLength: 20
+        minLength: 2
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controllers.CreateArticleRequest:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      content:
+        example: 这里是文章正文内容，包含 Gin、GORM 和 MySQL 的实践记录。
+        type: string
+      cover_url:
+        example: https://example.com/cover.jpg
+        type: string
+      is_top:
+        example: 0
+        type: integer
+      summary:
+        example: 这是一篇关于 Go 后端开发的文章摘要
+        type: string
+      tag_ids:
+        example:
+        - 1
+        - 2
+        items:
+          type: integer
+        type: array
+      title:
+        example: 我的第一篇博客
+        type: string
+    required:
+    - category_id
+    - content
+    - cover_url
+    - is_top
+    - summary
+    - title
+    type: object
+  controllers.CreateCategoryRequest:
+    properties:
+      category_name:
+        example: Go 后端
+        type: string
+      slug:
+        example: go-backend
+        type: string
+      sort:
+        example: 10
+        type: integer
+    required:
+    - category_name
+    type: object
+  controllers.CreateCommentRequest:
+    properties:
+      content:
+        example: 这是一条 Apifox 测试评论
+        type: string
+      email:
+        example: tester@example.com
+        type: string
+      nickname:
+        example: Apifox Tester
+        type: string
+      parent_id:
+        example: 0
+        type: integer
+      target_id:
+        example: 1
+        type: integer
+      target_type:
+        example: 1
+        type: integer
+      website:
+        example: https://example.com
+        type: string
+    required:
+    - content
+    - nickname
+    - target_type
+    type: object
+  controllers.CreateFriendLinkRequest:
+    properties:
+      logo:
+        example: https://example.com/logo.png
+        type: string
+      name:
+        example: Example Blog
+        type: string
+      sort:
+        example: 10
+        type: integer
+      status:
+        example: 1
+        type: integer
+      url:
+        example: https://example.com
+        type: string
+    required:
+    - name
+    - url
+    type: object
+  controllers.CreateTagRequest:
+    properties:
+      slug:
+        example: gin
+        type: string
+      sort:
+        example: 10
+        type: integer
+      tag_name:
+        example: Gin
+        type: string
+    required:
+    - slug
+    - sort
+    - tag_name
+    type: object
+  controllers.UpdateArticleRequest:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      content:
+        example: 这里是更新后的文章正文内容。
+        type: string
+      cover_url:
+        example: https://example.com/cover-updated.jpg
+        type: string
+      is_top:
+        example: 1
+        type: integer
+      summary:
+        example: 这是一篇更新后的 Go 后端开发文章摘要
+        type: string
+      tag_ids:
+        example:
+        - 1
+        - 2
+        items:
+          type: integer
+        type: array
+      title:
+        example: 我的第一篇博客 - 已更新
+        type: string
+    required:
+    - category_id
+    - content
+    - cover_url
+    - is_top
+    - summary
+    - title
+    type: object
+  controllers.UpdateArticleStatusRequest:
+    properties:
+      status:
+        description: 要用指针，不然传0可能会认为没传，导致格式错误
+        example: 1
+        type: integer
+    required:
+    - status
+    type: object
+  controllers.UpdateCategorySortRequest:
+    properties:
+      sort:
+        example: 20
+        type: integer
+    required:
+    - sort
+    type: object
+  controllers.UpdateCategoryStatusRequest:
+    properties:
+      status:
+        example: 1
+        type: integer
+    required:
+    - status
+    type: object
+  controllers.UpdateFriendLinkRequest:
+    properties:
+      id:
+        example: 1
+        type: integer
+      logo:
+        example: https://example.com/logo-updated.png
+        type: string
+      name:
+        example: Example Blog Updated
+        type: string
+      sort:
+        example: 20
+        type: integer
+      status:
+        example: 1
+        type: integer
+      url:
+        example: https://example.com
+        type: string
+    required:
+    - id
+    - name
+    - url
+    type: object
+  controllers.UpdatePasswordRequest:
+    properties:
+      new_password:
+        example: "654321"
+        maxLength: 20
+        minLength: 6
+        type: string
+      old_password:
+        example: "123456"
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  controllers.UpdateTagSortRequest:
+    properties:
+      sort:
+        example: 20
+        type: integer
+    required:
+    - sort
+    type: object
+  controllers.UpdateTagStatusRequest:
+    properties:
+      status:
+        example: 1
+        type: integer
+    required:
+    - status
+    type: object
+  controllers.UpdateUsernameRequest:
+    properties:
+      new_username:
+        example: newadmin
+        maxLength: 20
+        minLength: 2
+        type: string
+      old_password:
+        example: "123456"
+        type: string
+    required:
+    - new_username
+    - old_password
+    type: object
+info:
+  contact: {}
+  description: Go Gin personal blog backend API.
+  title: MyBlog API
+  version: "1.0"
+paths:
+  /api/admin/articles:
+    get:
+      consumes:
+      - application/json
+      description: 管理员分页获取后台文章列表，支持状态、删除状态、分类和关键词筛选。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      - description: 文章状态，-1 全部，0 草稿，1 发布，2 下架
+        in: query
+        name: status
+        type: integer
+      - description: 删除状态，-1 全部，0 未删除，1 已删除
+        in: query
+        name: is_deleted
+        type: integer
+      - description: 分类 ID，0 表示全部
+        in: query
+        name: category_id
+        type: integer
+      - description: 关键词
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0,\"page\":1,\"size\":10},\"msg\":\"获取后台文章列表成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"文章状态参数错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取后台文章列表失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 获取后台文章列表
+      tags:
+      - admin/article
+  /api/admin/articles/create:
+    post:
+      consumes:
+      - application/json
+      description: 管理员创建文章，文章初始状态由业务逻辑设置。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建文章请求体。需要先准备 category_id 和 tag_ids，示例会创建一篇草稿文章
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"创建文章成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数格式错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"创建文章失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 创建文章
+      tags:
+      - admin/article
+  /api/admin/articles/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 管理员按文章 ID 删除文章。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"删除文章成果\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"文章ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"删除文章失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 删除文章
+      tags:
+      - admin/article
+  /api/admin/articles/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 管理员按文章 ID 更新文章内容和标签。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新文章请求体。需要先准备 article_id、category_id 和 tag_ids
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"修改文章成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"文章ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"修改文章失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新文章
+      tags:
+      - admin/article
+  /api/admin/articles/updateStatus/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 管理员发布或下架文章。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 文章状态请求体。status 示例：1 表示发布，2 表示下架
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateArticleStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"文章发布成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"文章状态不合法,只允许发布或下架\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新文章状态失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新文章状态
+      tags:
+      - admin/article
+  /api/admin/categories:
+    post:
+      consumes:
+      - application/json
+      description: 管理员获取全部分类列表。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":[],\"msg\":\"获取分类列表成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取分类列表失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 获取后台分类
+      tags:
+      - admin/category
+  /api/admin/categories/{id}/sort:
+    put:
+      consumes:
+      - application/json
+      description: 管理员更新分类排序值。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 分类 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 分类排序请求体。sort 示例：20
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateCategorySortRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"更新分类排序成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"分类ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新分类排序失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新分类排序
+      tags:
+      - admin/category
+  /api/admin/categories/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: 管理员更新分类启用状态。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 分类 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 分类状态请求体。status 示例：1 表示启用，0 表示停用
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateCategoryStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"更新分类状态成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"分类ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新分类状态失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新分类状态
+      tags:
+      - admin/category
+  /api/admin/categories/create:
+    post:
+      consumes:
+      - application/json
+      description: 管理员创建文章分类。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建分类请求体。category_name 示例：Go 后端；slug 示例：go-backend；sort 示例：10
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"创建分类成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数格式错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"创建分类失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 创建分类
+      tags:
+      - admin/category
+  /api/admin/comments/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 管理员按评论 ID 删除评论。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 评论 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"删除评论成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"删除评论失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 删除评论
+      tags:
+      - admin/comment
+  /api/admin/friendlinks:
+    get:
+      consumes:
+      - application/json
+      description: 管理员分页获取全部友链。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"links\":[],\"total\":0,\"page\":1,\"size\":10},\"msg\":\"获取成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取友链失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 获取后台友链
+      tags:
+      - admin/friendlink
+  /api/admin/friendlinks/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 管理员按友链 ID 删除友链。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 友链 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"删除成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"删除失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 删除友链
+      tags:
+      - admin/friendlink
+  /api/admin/friendlinks/{id}/update:
+    put:
+      consumes:
+      - application/json
+      description: 管理员更新友链。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 友链 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新友链请求体。id 需要和 path 中的友链 ID 保持一致
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateFriendLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"更新成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新友链
+      tags:
+      - admin/friendlink
+  /api/admin/friendlinks/add:
+    post:
+      consumes:
+      - application/json
+      description: 管理员创建友链。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建友链请求体。name 示例：Example Blog；url 示例：https://example.com；status
+          示例：1
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateFriendLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"创建成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"创建失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 创建友链
+      tags:
+      - admin/friendlink
+  /api/admin/login:
+    post:
+      consumes:
+      - application/json
+      description: 管理员使用用户名和密码登录，成功后返回 JWT token。
+      parameters:
+      - description: 管理员登录请求体。username 示例：admin；password 示例：123456
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AdminLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"登录成功\",\"data\":{\"token\":\"xxx\",\"username\":\"admin\",\"userID\":1}}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数格式错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"Token生成失败\"}
+          schema:
+            type: object
+      summary: 管理员登录
+      tags:
+      - admin
+  /api/admin/password:
+    post:
+      consumes:
+      - application/json
+      description: 已登录管理员修改密码。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改密码请求体。old_password 示例：123456；new_password 示例：654321
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"密码修改成功，请重新登录\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数校验失败\"}
+          schema:
+            type: object
+        "401":
+          description: 示例：{\"code\":401,\"msg\":\"旧密码错误\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 修改管理员密码
+      tags:
+      - admin
+  /api/admin/register:
+    post:
+      consumes:
+      - application/json
+      description: 注册管理员账号，当前路由未加鉴权。
+      parameters:
+      - description: 管理员注册请求体。username 示例：admin；password 示例：123456
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AdminRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"Welcome!\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数校验失败\"}
+          schema:
+            type: object
+        "409":
+          description: 示例：{\"code\":409,\"msg\":\"用户名已被注册\"}
+          schema:
+            type: object
+      summary: 管理员注册
+      tags:
+      - admin
+  /api/admin/tag/{id}/sort:
+    put:
+      consumes:
+      - application/json
+      description: 管理员更新标签排序值。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 标签 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 标签排序请求体。sort 示例：20
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateTagSortRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"更新标签排序成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"标签ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新标签排序失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新标签排序
+      tags:
+      - admin/tag
+  /api/admin/tag/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: 管理员更新标签启用状态。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 标签 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 标签状态请求体。status 示例：1 表示启用，0 表示停用
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateTagStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"更新标签状态成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"标签ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"更新标签状态失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 更新标签状态
+      tags:
+      - admin/tag
+  /api/admin/tag/create:
+    post:
+      consumes:
+      - application/json
+      description: 管理员创建文章标签。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 创建标签请求体。tag_name 示例：Gin；slug 示例：gin；sort 示例：10
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"创建标签成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数格式错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"创建标签失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 创建标签
+      tags:
+      - admin/tag
+  /api/admin/tags:
+    get:
+      consumes:
+      - application/json
+      description: 管理员获取全部标签列表。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":[],\"msg\":\"获取标签列表成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取标签列表失败\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 获取后台标签
+      tags:
+      - admin/tag
+  /api/admin/username:
+    post:
+      consumes:
+      - application/json
+      description: 已登录管理员修改用户名。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改用户名请求体。old_password 示例：123456；new_username 示例：newadmin
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateUsernameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"msg\":\"用户名修改成功，请重新登录\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数校验失败\"}
+          schema:
+            type: object
+        "401":
+          description: 示例：{\"code\":401,\"msg\":\"用户未登录\"}
+          schema:
+            type: object
+      security:
+      - BearerAuth: []
+      summary: 修改管理员用户名
+      tags:
+      - admin
+  /api/articles/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据文章 ID 获取已发布且未删除的文章详情。
+      parameters:
+      - description: 文章 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1,\"title\":\"标题\"},\"msg\":\"查询成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"ID格式错误，请输入数字\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"查询失败或文章不存在\"}
+          schema:
+            type: object
+      summary: 获取文章详情
+      tags:
+      - article
+  /api/articles/search:
+    get:
+      consumes:
+      - application/json
+      description: 根据关键词分页搜索已发布且未删除的文章。
+      parameters:
+      - description: 搜索关键词
+        in: query
+        name: keyword
+        type: string
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0,\"page\":1,\"size\":10},\"msg\":\"搜索成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"搜索文章失败\"}
+          schema:
+            type: object
+      summary: 搜索文章
+      tags:
+      - article
+  /api/articles/timeline:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取已发布且未删除的文章时间轴列表。
+      parameters:
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0},\"msg\":\"获取文章时间轴成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取文章时间轴失败\"}
+          schema:
+            type: object
+      summary: 获取文章时间轴
+      tags:
+      - article
+  /api/categories:
+    get:
+      consumes:
+      - application/json
+      description: 获取启用状态的分类列表。
+      parameters:
+      - description: 无业务参数
+        in: query
+        name: unused
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":[],\"msg\":\"获取分类列表成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取分类列表失败\"}
+          schema:
+            type: object
+      summary: 获取前台分类
+      tags:
+      - category
+  /api/categories/{id}/articles:
+    get:
+      consumes:
+      - application/json
+      description: 根据分类 ID 分页获取已发布且未删除的文章列表。
+      parameters:
+      - description: 分类 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0},\"msg\":\"获取文章列表成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"分类ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取文章列表失败\"}
+          schema:
+            type: object
+      summary: 按分类获取文章
+      tags:
+      - article/category
+  /api/cmments/get:
+    get:
+      consumes:
+      - application/json
+      description: 根据评论目标类型和目标 ID 分页获取评论列表。
+      parameters:
+      - description: 目标类型，1 文章，2 留言板
+        in: query
+        name: target_type
+        required: true
+        type: integer
+      - description: 目标 ID
+        in: query
+        name: target_id
+        required: true
+        type: integer
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0,\"page\":1,\"page_size\":10},\"msg\":\"获取评论成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取评论失败\"}
+          schema:
+            type: object
+      summary: 获取评论
+      tags:
+      - comment
+  /api/comments/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加文章评论或留言板评论。
+      parameters:
+      - description: 评论请求体。文章评论 target_type 示例：1；留言 target_type 示例：2，留言示例可参考 CreateMessageRequest
+          字段
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"id\":1},\"msg\":\"评论成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"参数错误\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"添加评论失败\"}
+          schema:
+            type: object
+      summary: 添加评论
+      tags:
+      - comment
+  /api/friendlinks:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取启用状态的友链。
+      parameters:
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"links\":[],\"total\":0,\"page\":1,\"size\":10},\"msg\":\"获取成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取友链失败\"}
+          schema:
+            type: object
+      summary: 获取前台友链
+      tags:
+      - friendlink
+  /api/tags:
+    get:
+      consumes:
+      - application/json
+      description: 获取启用状态的标签列表。
+      parameters:
+      - description: 无业务参数
+        in: query
+        name: unused
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":[],\"msg\":\"获取标签列表成功\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取标签列表失败\"}
+          schema:
+            type: object
+      summary: 获取前台标签
+      tags:
+      - tag
+  /api/tags/{id}/articles:
+    get:
+      consumes:
+      - application/json
+      description: 根据标签 ID 分页获取已发布且未删除的文章列表。
+      parameters:
+      - description: 标签 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 页码，默认 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量，默认 10
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 示例：{\"code\":200,\"data\":{\"list\":[],\"total\":0},\"msg\":\"获取标签文章列表成功\"}
+          schema:
+            type: object
+        "400":
+          description: 示例：{\"code\":400,\"msg\":\"标签ID不合法\"}
+          schema:
+            type: object
+        "500":
+          description: 示例：{\"code\":500,\"msg\":\"获取标签文章列表失败\"}
+          schema:
+            type: object
+      summary: 按标签获取文章
+      tags:
+      - article/tag
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

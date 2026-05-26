@@ -12,8 +12,8 @@ type Category struct {
 	Slug         string    `gorm:"size:255;not null" json:"slug"`
 	Status       int       `gorm:"not null;default:1" json:"status"`
 	ArticleCount uint32    `gorm:"not null;default:0" json:"article_count"`
-	CreateTime   time.Time `gorm:"column:create_time" json:"create_time"`
-	UpdateTime   time.Time `gorm:"column:update_time" json:"update_time"`
+	CreateTime   time.Time `gorm:"column:create_time;autoCreateTime" json:"create_time"`
+	UpdateTime   time.Time `gorm:"column:update_time;autoUpdateTime" json:"update_time"`
 }
 
 func (Category) TableName() string {

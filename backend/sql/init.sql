@@ -8,7 +8,7 @@ use my_blog;
 CREATE TABLE admin_user(
                            id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '管理员ID',
                            username varchar(50) NOT NULL COMMENT '用户名',
-                           password varchar(50) not null comment '加密后的密码',
+                           password varchar(500) not null comment '加密后的密码',
                            nickname varchar(255) not null comment '昵称',
                            create_time datetime not null default current_timestamp comment'创建时间',
                            update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
@@ -53,7 +53,7 @@ create table article (
                          category_id bigint not null comment '分类ID',
                          title varchar(150) not null comment '文章标题',
                          summary varchar(500) default null comment '文章摘要',
-                         content mediumint not null comment '文章正文，Markdown内容',
+                         content longtext not null comment '文章正文，Markdown内容',
                          cover_url varchar(255) default null comment '封面图URL',
 
                          status tinyint not null default 0 comment '状态：0草稿，1发布，2下架',
@@ -84,6 +84,21 @@ create table article_tag(
                             key idx_tag_article (tag_id,article_id)
 )engine=innodb default charset =utf8mb4 comment='文章标签关联表';
 
+-- 访客身份表
+create table visitor_identity (
+                         id bigint primary key auto_increment comment '访客身份ID',
+                         email varchar(100) not null comment '游客邮箱，统一身份标识',
+                         nickname varchar(50) not null comment '绑定昵称',
+                         avatar varchar(255) default null comment '头像URL',
+                         first_ip varchar(64) default null comment '首次提交IP，仅记录',
+                         last_ip varchar(64) default null comment '最近提交IP，仅记录',
+                         user_agent varchar(500) default null comment '最近浏览器UA',
+                         create_time datetime not null default current_timestamp comment '创建时间',
+                         update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+
+                         unique key uk_visitor_identity_email(email)
+) engine=InnoDB default charset=utf8mb4 comment='访客身份表';
+
 -- 评论表
 create table comment (
                          id bigint primary key auto_increment comment '评论ID',
@@ -103,6 +118,7 @@ create table comment (
 
                          content varchar(1000) not null comment '评论内容',
                          ip varchar (64) default null comment '评论者IP',
+                         ip_location varchar(100) default null comment 'IP解析地区，前台展示使用',
                          user_agent varchar(500) default null comment '浏览器UA',
 
                          is_admin_reply tinyint not null default 0 comment '是否管理员回复：1是，0否',
@@ -124,7 +140,8 @@ create table friend_link(
                             id bigint primary key auto_increment comment '友链ID',
                             name varchar (100) not null comment '站点名称',
                             url varchar (255) not null comment '站点地址',
-                            logo varchar(255) default null comment '站点描述',
+                            logo varchar(255) default null comment '站点Logo',
+                            description varchar(255) default null comment '友链描述/一句话介绍',
                             sort int not null default 0 comment '排序值，越大越靠前',
                             status tinyint not null default 1 comment '状态：1正常，0隐藏',
                             create_time datetime not null default current_timestamp comment '创建时间',
@@ -145,7 +162,3 @@ create table site_config(
 
                             unique key uk_config_key(config_key)
 )engine =InnoDB default charset = utf8mb4 comment ='网站配置表'
-
-
-
-

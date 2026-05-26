@@ -1,0 +1,16 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { AdminPage } from "@/components/admin/AdminPage";
+
+export function getStaticPaths() {
+  return Array.from({ length: 200 }, (_, index) => ({
+    params: { id: String(index + 1) },
+  }));
+}
+
+const articleId = Number(Astro.params.id);
+---
+
+<AdminLayout title="编辑文章 - Vanillaxi">
+  <AdminPage page="article-edit" articleId={articleId} client:load />
+</AdminLayout>

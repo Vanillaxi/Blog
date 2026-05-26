@@ -12,8 +12,8 @@ type Tag struct {
 	Status       int8      `gorm:"column:status" json:"status"`
 	Slug         string    `gorm:"size:255;not null" json:"slug"`
 	Sort         uint32    `gorm:"column:sort" json:"sort"`
-	CreateTime   time.Time `gorm:"column:create_time" json:"create_time"`
-	UpdateTime   time.Time `gorm:"column:update_time" json:"update_time"`
+	CreateTime   time.Time `gorm:"column:create_time;autoCreateTime" json:"create_time"`
+	UpdateTime   time.Time `gorm:"column:update_time;autoUpdateTime" json:"update_time"`
 }
 
 func (Tag) TableName() string {

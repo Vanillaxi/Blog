@@ -1,0 +1,11 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import PageShell from "@/components/public/PageShell.astro";
+import { GuestbookSection } from "@/components/public/GuestbookSection";
+---
+
+<PublicLayout title="留言板 - Vanillaxi">
+  <PageShell title="留言板" subtitle="可以写一点路过的话，邮箱不会完整展示。">
+    <GuestbookSection client:load />
+  </PageShell>
+</PublicLayout>

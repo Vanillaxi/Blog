@@ -1,0 +1,10 @@
+export * as articleApi from "./article";
+export * as authApi from "./auth";
+export * as categoryApi from "./category";
+export * as commentApi from "./comment";
+export * as friendApi from "./friend";
+export * as guestbookApi from "./guestbook";
+export * as tagApi from "./tag";
+export * as visitorApi from "./visitor";
+export * as adminApi from "./admin";
+export * from "./http";

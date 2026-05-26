@@ -124,7 +124,7 @@ func GetArticlesByTagID(tagID uint32, pageNum int, pageSize int) ([]Article, int
 
 	baseQuery := global.DB.Table("article AS a").
 		Joins("JOIN article_tag AS at ON a.id =at.article_id").
-		Where("at.tag_id=? and a.status=? and a.deleted=?", tagID, 1, 0)
+		Where("at.tag_id=? and a.status=? and a.is_deleted=?", tagID, 1, 0)
 
 	//先查总数
 	if err := baseQuery.Count(&total).Error; err != nil {
@@ -165,6 +165,34 @@ func GetArticleDetail(id uint32) (Article, error) {
 		Where("id=? and status=? and is_deleted=?", id, 1, 0).
 		First(&article).Error
 	return article, err
+}
+
+type AdminArticleDetail struct {
+	Article
+	TagIDs []uint32 `json:"tag_ids"`
+}
+
+func GetAdminArticleDetail(id uint32) (AdminArticleDetail, error) {
+	var article Article
+	err := global.DB.
+		Where("id=? and is_deleted=?", id, 0).
+		First(&article).Error
+	if err != nil {
+		return AdminArticleDetail{}, err
+	}
+
+	var tagIDs []uint32
+	err = global.DB.Model(&ArticleTag{}).
+		Where("article_id=?", id).
+		Pluck("tag_id", &tagIDs).Error
+	if err != nil {
+		return AdminArticleDetail{}, err
+	}
+
+	return AdminArticleDetail{
+		Article: article,
+		TagIDs:  tagIDs,
+	}, nil
 }
 
 // 后台查全部

@@ -2,12 +2,23 @@ package main
 
 import (
 	"MyBlog/config"
+	_ "MyBlog/docs"
 	"MyBlog/global"
 	"MyBlog/initialize"
 	"MyBlog/router"
 	"log"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title MyBlog API
+// @version 1.0
+// @description Go Gin personal blog backend API.
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	//读取配置文件
 	cfg, err := config.LoadConfig()
@@ -26,6 +37,7 @@ func main() {
 
 	//初始化路由
 	r := router.InitRouter()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	//启动服务
 	err = r.Run(":" + global.Config.App.Port)

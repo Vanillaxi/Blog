@@ -1,0 +1,11 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import PageShell from "@/components/public/PageShell.astro";
+import { Timeline } from "@/components/public/Timeline";
+---
+
+<PublicLayout title="时间轴 - Vanillaxi">
+  <PageShell title="时间轴" subtitle="把文章按时间安静地放在这里。">
+    <Timeline client:load />
+  </PageShell>
+</PublicLayout>
